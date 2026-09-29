@@ -1,0 +1,486 @@
+<div class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 transition-colors mb-6">
+    <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-200 dark:border-slate-800">
+        <div>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">Panel de Administración</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Control de personal médico, roles institucionales y estadísticas.</p>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Registro y Gestión de usuarios (2 columnas) -->
+        <div class="lg:col-span-2 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl bg-slate-50/50 dark:bg-slate-850">
+            <h3 class="font-bold text-slate-900 dark:text-slate-100 mb-4 text-base flex items-center gap-2">
+                <span>Registrar Nuevo Usuario</span>
+            </h3>
+            
+            <form hx-post="/auth/register" hx-target="#register-msg" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Nombre Completo</label>
+                        <input type="text" name="nombre" required placeholder="Ej: Juan Perez" class="w-full p-2.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Rol</label>
+                        <select name="rol" onchange="document.getElementById('medico-fields').style.display = this.value === 'MEDICO' ? 'block' : 'none'" class="w-full p-2.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500">
+                            <option value="RECEPCION">Recepción</option>
+                            <option value="MEDICO">Médico</option>
+                            <option value="ADMIN">Administrador</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="medico-fields" style="display: none;" class="bg-blue-50/70 dark:bg-blue-950/30 p-4 rounded-xl border border-blue-100 dark:border-blue-900/50 space-y-3">
+                    <p class="text-xs text-blue-800 dark:text-blue-300 font-bold uppercase tracking-wider">Datos Exclusivos de Personal Médico:</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-slate-600 dark:text-slate-300 mb-1">Matrícula Profesional</label>
+                            <input type="text" name="matricula" placeholder="Ej: MP-45210" class="w-full p-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-100">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-600 dark:text-slate-300 mb-1">Especialidad Médica</label>
+                            <select name="especialidad" class="w-full p-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-100">
+                                <option value="Clínica Médica">Clínica Médica</option>
+                                <option value="Cardiología">Cardiología</option>
+                                <option value="Pediatría">Pediatría</option>
+                                <option value="Traumatología">Traumatología</option>
+                                <option value="Guardia General">Guardia General</option>
+                                <option value="Cirugía General">Cirugía General</option>
+                                <option value="Dermatología">Dermatología</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Email</label>
+                        <input type="email" name="email" required placeholder="usuario@hospital.com" class="w-full p-2.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Contraseña Temporal</label>
+                        <input type="password" name="password" required class="w-full p-2.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100">
+                    </div>
+                </div>
+                
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2.5 rounded-xl w-full text-sm shadow-sm transition">
+                    Crear Usuario
+                </button>
+                <div id="register-msg" class="text-sm text-center font-semibold"></div>
+            </form>
+
+            <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800">
+                <h3 class="font-bold text-slate-900 dark:text-slate-100 mb-3 text-sm uppercase tracking-wider">Gestión de Personal</h3>
+                <div hx-get="/auth/lista" hx-trigger="load, updateUsers from:body" id="user-list">
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Cargando personal...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas del Día (1 columna) -->
+        <div class="border border-slate-200 dark:border-slate-800 p-6 rounded-2xl bg-slate-50/50 dark:bg-slate-850 flex flex-col">
+            <h3 class="font-bold text-slate-900 dark:text-slate-100 mb-4 text-base flex items-center gap-2">
+                <span>Estadísticas del Día</span>
+            </h3>
+            <div hx-get="/atenciones/stats" hx-trigger="load" id="stats-container" class="flex-1 flex flex-col justify-center">
+                <p class="text-xs text-slate-500 dark:text-slate-400 text-center py-6">Cargando estadísticas...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MÓDULO OFICIAL DE ESTADÍSTICAS Y REPORTE ESTAMED (DIRECTIVA DGS 03/23) -->
+    <div class="mt-8 border-t border-slate-200 dark:border-slate-800 pt-6">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 mb-6 pb-4 border-b border-slate-200 dark:border-slate-800">
+            <div>
+                <h3 class="font-bold text-slate-900 dark:text-slate-100 text-lg flex items-center gap-2">
+                    <span>Estadísticas Epidemiológicas y Reporte ESTAMED</span>
+                    <span class="text-[11px] bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 font-bold px-2.5 py-0.5 rounded-full font-mono">DGS 03/23</span>
+                </h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Vigilancia epidemiológica, consolidación de guardia militar y generación de la planilla reglamentaria sin datos personales.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <button type="button" 
+                        hx-get="/estadisticas/autoridades-modal" 
+                        hx-target="#modal-content"
+                        onclick="document.getElementById('modal-atencion').classList.remove('hidden')"
+                        class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-2 rounded-xl text-xs font-semibold transition border border-slate-300 dark:border-slate-700">
+                    Autoridades Militares
+                </button>
+                <button type="button" 
+                        onclick="abrirEstamedImprimir()" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-1.5" title="Abrir planilla reglamentaria de 10 columnas en formato A4 para impresión o PDF">
+                    Imprimir ESTAMED (A4)
+                </button>
+                <button type="button" 
+                        onclick="descargarEstamedExcel()" 
+                        class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-1.5" title="Descargar planilla oficial con formato exacto para la DGS">
+                    Exportar Excel (.xlsx)
+                </button>
+            </div>
+        </div>
+
+        <!-- Filtros del Módulo de Estadísticas -->
+        <div class="bg-slate-50/70 dark:bg-slate-850 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 mb-6">
+            <form id="form-filtros-estamed" onsubmit="event.preventDefault(); actualizarEstadisticas();" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 items-end">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Período</label>
+                    <select id="filtro-periodo" name="periodo" onchange="toggleFiltroFechas(this.value)" class="w-full p-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 font-semibold">
+                        <option value="semestre1" selected>1er Semestre (Ene - Jun)</option>
+                        <option value="semestre2">2do Semestre (Jul - Dic)</option>
+                        <option value="anio">Año Completo</option>
+                        <option value="personalizado">Rango Personalizado</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Año</label>
+                    <select id="filtro-anio" name="anio" class="w-full p-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 font-semibold font-mono">
+                        <option value="2026" selected>2026</option>
+                        <option value="2025">2025</option>
+                        <option value="2027">2027</option>
+                    </select>
+                </div>
+
+                <div id="campo-fecha-desde" class="hidden">
+                    <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Desde</label>
+                    <input type="date" id="filtro-desde" name="desde" class="w-full p-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-mono">
+                </div>
+
+                <div id="campo-fecha-hasta" class="hidden">
+                    <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Hasta</label>
+                    <input type="date" id="filtro-hasta" name="hasta" class="w-full p-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-mono">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Destino (UUMM)</label>
+                    <select id="filtro-destino" name="destino" class="w-full p-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 font-semibold">
+                        <option value="TODOS" selected>Todos los Destinos</option>
+                        <option value="CU GRL">CU GRL</option>
+                        <option value="SGE">SGE</option>
+                        <option value="BCOM 602">BCOM 602</option>
+                        <option value="DGAAHH">DGAAHH</option>
+                        <option value="DGAAJJ">DGAAJJ</option>
+                        <option value="SECR AY JEMGE">SECR AY JEMGE</option>
+                        <option value="CASA MILITAR">CASA MILITAR</option>
+                        <option value="DGII">DGII</option>
+                        <option value="DGAF">DGAF</option>
+                        <option value="DGCICD">DGCICD</option>
+                        <option value="DGCYF">DGCYF</option>
+                        <option value="DGICIA">DGICIA</option>
+                        <option value="DGPB">DGPB</option>
+                        <option value="DPM">DPM</option>
+                        <option value="DPC">DPC</option>
+                        <option value="DGPPP">DGPPP</option>
+                        <option value="OSFA">OSFA</option>
+                        <option value="MIN DEF">MIN DEF</option>
+                        <option value="EMCO">EMCO</option>
+                        <option value="DGOD">DGOD</option>
+                        <option value="CGE">CGE</option>
+                        <option value="SHE">SHE</option>
+                    </select>
+                </div>
+
+                <div class="flex gap-2">
+                    <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold p-2 rounded-xl text-xs transition shadow-sm">
+                        Aplicar Filtros
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tarjetas de Métricas Clave (KPIs) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+            <div class="bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl">
+                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Total Consultas</p>
+                <p id="kpi-total" class="text-xl font-bold text-blue-600 dark:text-blue-400 font-mono mt-1">-</p>
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl">
+                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Oficiales (Cat 1)</p>
+                <p id="kpi-cat1" class="text-xl font-bold text-slate-800 dark:text-slate-200 font-mono mt-1">-</p>
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl">
+                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Suboficiales (Cat 2)</p>
+                <p id="kpi-cat2" class="text-xl font-bold text-slate-800 dark:text-slate-200 font-mono mt-1">-</p>
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl">
+                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Soldados SV (Cat 3)</p>
+                <p id="kpi-cat3" class="text-xl font-bold text-slate-800 dark:text-slate-200 font-mono mt-1">-</p>
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl">
+                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Personal Civil (Cat 5)</p>
+                <p id="kpi-cat5" class="text-xl font-bold text-slate-800 dark:text-slate-200 font-mono mt-1">-</p>
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl">
+                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Derivaciones ('X')</p>
+                <p id="kpi-derivaciones" class="text-xl font-bold text-red-600 dark:text-red-400 font-mono mt-1">-</p>
+            </div>
+        </div>
+
+        <!-- 4 Gráficos Interactivos Chart.js -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Gráfico 1: Categorías Militares -->
+            <div class="bg-slate-50/60 dark:bg-slate-850 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                <h4 class="font-bold text-slate-800 dark:text-slate-200 text-xs uppercase tracking-wider mb-3">Distribución por Categoría Militar (DGS 03/23)</h4>
+                <div class="h-64 relative flex items-center justify-center">
+                    <canvas id="chart-categorias"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfico 2: Evolución Temporal -->
+            <div class="bg-slate-50/60 dark:bg-slate-850 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                <h4 class="font-bold text-slate-800 dark:text-slate-200 text-xs uppercase tracking-wider mb-3">Evolución de Consultas en el Tiempo</h4>
+                <div class="h-64 relative">
+                    <canvas id="chart-temporal"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfico 3: Top Destinos Militares -->
+            <div class="bg-slate-50/60 dark:bg-slate-850 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                <h4 class="font-bold text-slate-800 dark:text-slate-200 text-xs uppercase tracking-wider mb-3">Top Destinos Militares (UUMM con Mayor Demanda)</h4>
+                <div class="h-64 relative">
+                    <canvas id="chart-destinos"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfico 4: Top Diagnósticos / CIE-11 -->
+            <div class="bg-slate-50/60 dark:bg-slate-850 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                <h4 class="font-bold text-slate-800 dark:text-slate-200 text-xs uppercase tracking-wider mb-3">Patologías y Diagnósticos Frecuentes (CIE-11)</h4>
+                <div class="h-64 relative">
+                    <canvas id="chart-diagnosticos"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Control de visibilidad de fechas personalizadas
+        function toggleFiltroFechas(val) {
+            const cDesde = document.getElementById('campo-fecha-desde');
+            const cHasta = document.getElementById('campo-fecha-hasta');
+            if (val === 'personalizado') {
+                cDesde.classList.remove('hidden');
+                cHasta.classList.remove('hidden');
+            } else {
+                cDesde.classList.add('hidden');
+                cHasta.classList.add('hidden');
+            }
+        }
+
+        // Obtener parámetros de filtro actuales
+        function getEstamedFilterParams() {
+            const periodo = document.getElementById('filtro-periodo').value;
+            const anio = document.getElementById('filtro-anio').value;
+            const destino = document.getElementById('filtro-destino').value;
+            const desde = document.getElementById('filtro-desde')?.value || '';
+            const hasta = document.getElementById('filtro-hasta')?.value || '';
+
+            const p = new URLSearchParams();
+            p.append('periodo', periodo);
+            p.append('anio', anio);
+            if (destino && destino !== 'TODOS') p.append('destino', destino);
+            if (periodo === 'personalizado') {
+                if (desde) p.append('desde', desde);
+                if (hasta) p.append('hasta', hasta);
+            }
+            return p.toString();
+        }
+
+        function abrirEstamedImprimir() {
+            const qs = getEstamedFilterParams();
+            window.open('/estadisticas/estamed/imprimir?' + qs, '_blank');
+        }
+
+        function descargarEstamedExcel() {
+            const qs = getEstamedFilterParams();
+            window.location.href = '/estadisticas/estamed/excel?' + qs;
+        }
+
+        // Instancias de Chart.js
+        let chartCategorias = null;
+        let chartTemporal = null;
+        let chartDestinos = null;
+        let chartDiagnosticos = null;
+
+        async function actualizarEstadisticas() {
+            const qs = getEstamedFilterParams();
+            try {
+                const res = await fetch('/estadisticas/datos?' + qs);
+                if (!res.ok) throw new Error('Error al cargar datos de estadísticas');
+                const data = await res.json();
+
+                // Actualizar KPIs
+                document.getElementById('kpi-total').textContent = data.total;
+                document.getElementById('kpi-cat1').textContent = data.categorias['1'] || 0;
+                document.getElementById('kpi-cat2').textContent = data.categorias['2'] || 0;
+                document.getElementById('kpi-cat3').textContent = data.categorias['3'] || 0;
+                document.getElementById('kpi-cat5').textContent = data.categorias['5'] || 0;
+                document.getElementById('kpi-derivaciones').textContent = data.derivaciones || 0;
+
+                const isDark = document.documentElement.classList.contains('dark');
+                const textColor = isDark ? '#cbd5e1' : '#475569';
+                const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
+
+                // Gráfico 1: Categorías (Doughnut)
+                if (chartCategorias) chartCategorias.destroy();
+                const ctxCat = document.getElementById('chart-categorias').getContext('2d');
+                chartCategorias = new Chart(ctxCat, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Oficiales (Cat 1)', 'Suboficiales (Cat 2)', 'Soldados SV (Cat 3)', 'Civiles (Cat 5)'],
+                        datasets: [{
+                            data: [
+                                data.categorias['1'] || 0,
+                                data.categorias['2'] || 0,
+                                data.categorias['3'] || 0,
+                                data.categorias['5'] || 0
+                            ],
+                            backgroundColor: ['#2563eb', '#0284c7', '#059669', '#d97706'],
+                            borderWidth: isDark ? 0 : 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { color: textColor, font: { size: 11 } }
+                            }
+                        }
+                    }
+                });
+
+                // Gráfico 2: Evolución Temporal (Line)
+                if (chartTemporal) chartTemporal.destroy();
+                const ctxTemp = document.getElementById('chart-temporal').getContext('2d');
+                chartTemporal = new Chart(ctxTemp, {
+                    type: 'line',
+                    data: {
+                        labels: data.serieTemporal.map(s => s.label),
+                        datasets: [{
+                            label: 'Atenciones',
+                            data: data.serieTemporal.map(s => s.cantidad),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#2563eb'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { ticks: { color: textColor }, grid: { color: gridColor } },
+                            y: { ticks: { color: textColor, stepSize: 1 }, grid: { color: gridColor }, beginAtZero: true }
+                        }
+                    }
+                });
+
+                // Gráfico 3: Destinos (Horizontal Bar)
+                if (chartDestinos) chartDestinos.destroy();
+                const ctxDest = document.getElementById('chart-destinos').getContext('2d');
+                chartDestinos = new Chart(ctxDest, {
+                    type: 'bar',
+                    data: {
+                        labels: data.topDestinos.map(d => d.nombre),
+                        datasets: [{
+                            label: 'Consultas',
+                            data: data.topDestinos.map(d => d.cantidad),
+                            backgroundColor: '#0284c7',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { ticks: { color: textColor }, grid: { color: gridColor }, beginAtZero: true },
+                            y: { ticks: { color: textColor }, grid: { display: false } }
+                        }
+                    }
+                });
+
+                // Gráfico 4: Diagnósticos (Bar)
+                if (chartDiagnosticos) chartDiagnosticos.destroy();
+                const ctxDiag = document.getElementById('chart-diagnosticos').getContext('2d');
+                chartDiagnosticos = new Chart(ctxDiag, {
+                    type: 'bar',
+                    data: {
+                        labels: data.topDiagnosticos.map(d => d.cie),
+                        datasets: [{
+                            label: 'Casos',
+                            data: data.topDiagnosticos.map(d => d.cantidad),
+                            backgroundColor: '#059669',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { ticks: { color: textColor, font: { weight: 'bold' } }, grid: { display: false } },
+                            y: { ticks: { color: textColor }, grid: { color: gridColor }, beginAtZero: true }
+                        }
+                    }
+                });
+
+            } catch (err) {
+                console.error('Error cargando estadísticas:', err);
+            }
+        }
+
+        // Cargar estadísticas automáticamente al iniciar la vista
+        if (typeof Chart !== 'undefined') {
+            actualizarEstadisticas();
+        } else {
+            window.addEventListener('load', actualizarEstadisticas);
+        }
+    </script>
+
+    <!-- Búsqueda de Pacientes (Para ver historial) -->
+    <div class="mt-8 border-t border-slate-200 dark:border-slate-800 pt-6">
+        <h3 class="font-bold text-slate-900 dark:text-slate-100 mb-1 text-base">Buscador Central de Historias Clínicas</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Inspección de antecedentes médicos, evoluciones y partes de enfermo por paciente.</p>
+        
+        <div class="flex gap-2 max-w-lg mb-4">
+            <input type="text" id="paciente-search-admin" name="q" placeholder="Ingrese DNI, Nombre o Apellido..."
+                   class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500"
+                   hx-get="/pacientes/buscar" 
+                   hx-trigger="keyup changed delay:400ms, search" 
+                   hx-target="#resultado-paciente-admin">
+        </div>
+        <div id="resultado-paciente-admin" class="bg-slate-50 dark:bg-slate-850 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <p class="text-slate-400 dark:text-slate-500 text-xs text-center">Ingrese un término de búsqueda para ver las historias clínicas.</p>
+        </div>
+    </div>
+
+    <!-- Registro de Auditoría Legal y Trazabilidad (Ley 25.326 y Ley 27.706) -->
+    <div class="mt-8 border-t border-slate-200 dark:border-slate-800 pt-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
+            <div>
+                <h3 class="font-bold text-slate-900 dark:text-slate-100 text-base flex items-center gap-2">
+                    <span>Bitácora de Auditoría y Trazabilidad de Historias Clínicas</span>
+                    <span class="text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold px-2 py-0.5 rounded-full">Ley 25.326 &amp; Ley 27.706</span>
+                </h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Registro inmutable de quién accedió a las historias clínicas, fecha, hora e IP.</p>
+            </div>
+            <button hx-get="/auth/auditoria" hx-target="#auditoria-list" class="text-xs bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 px-3 py-1.5 rounded-lg text-slate-700 dark:text-slate-300 font-semibold transition">
+                Actualizar Registro
+            </button>
+        </div>
+        <div hx-get="/auth/auditoria" hx-trigger="load" id="auditoria-list" class="bg-slate-50 dark:bg-slate-850 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-x-auto">
+            <p class="text-xs text-slate-500 dark:text-slate-400 text-center py-3">Cargando registros de auditoría...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Compartido -->
+<div id="modal-atencion" class="hidden fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-2xl w-full p-6 md:p-8 border border-slate-200 dark:border-slate-800 max-h-[90vh] overflow-y-auto" id="modal-content">
+    </div>
+</div>

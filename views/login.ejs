@@ -1,0 +1,56 @@
+<div class="max-w-md mx-auto mt-8 bg-white dark:bg-slate-900 p-8 md:p-10 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl transition-colors">
+    <div class="text-center mb-6">
+        <img src="/img/logo.svg" alt="Sistema Hospitalario" class="w-20 h-20 mx-auto mb-3 object-contain drop-shadow-md rounded-full bg-white p-1">
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">Sistema Hospitalario</h2>
+        <p class="text-slate-500 dark:text-slate-400 text-xs mt-1">Portal de Acceso Clínico, Turnos y Analítica</p>
+    </div>
+
+    <form hx-post="/auth/login" hx-target="#login-error" hx-swap="innerHTML" class="space-y-4">
+        <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Correo Electrónico</label>
+            <input type="email" id="login-email" name="email" required placeholder="admin@hospital.com"
+                   class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 transition">
+        </div>
+        <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Contraseña</label>
+            <input type="password" id="login-password" name="password" required placeholder="••••••••"
+                   class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 transition">
+        </div>
+        
+        <div id="login-error" class="text-red-500 text-xs font-semibold text-center min-h-[1rem]"></div>
+
+        <button type="submit" 
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-xl font-bold text-sm shadow-md transition">
+            Iniciar Sesión
+        </button>
+    </form>
+
+    <!-- Credenciales de Demostración y Simulación -->
+    <div class="mt-6 pt-5 border-t border-slate-200 dark:border-slate-800">
+        <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 text-center">Acceso Rápido de Simulación</p>
+        <div class="grid grid-cols-3 gap-2">
+            <button type="button" onclick="fillLogin('admin@hospital.com', 'admin123')"
+                    class="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg text-center transition">
+                <span class="block text-xs font-bold text-slate-800 dark:text-slate-200">Admin</span>
+                <span class="block text-[10px] text-slate-500">Completo</span>
+            </button>
+            <button type="button" onclick="fillLogin('dr.mendez@hospital.com', 'medico123')"
+                    class="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg text-center transition">
+                <span class="block text-xs font-bold text-slate-800 dark:text-slate-200">Médico</span>
+                <span class="block text-[10px] text-slate-500">Cardiología</span>
+            </button>
+            <button type="button" onclick="fillLogin('recepcion@hospital.com', 'recepcion123')"
+                    class="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg text-center transition">
+                <span class="block text-xs font-bold text-slate-800 dark:text-slate-200">Recepción</span>
+                <span class="block text-[10px] text-slate-500">Admisión</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function fillLogin(email, password) {
+    document.getElementById('login-email').value = email;
+    document.getElementById('login-password').value = password;
+}
+</script>

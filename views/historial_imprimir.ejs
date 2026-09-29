@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historia Clínica - <%= escapeHTML(paciente.apellido) %>, <%= escapeHTML(paciente.nombre) %></title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            line-height: 1.5;
+            padding: 24px;
+        }
+        .container {
+            max-width: 840px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .no-print-bar {
+            max-width: 840px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e293b;
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 8px;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-print {
+            background-color: #10b981;
+            color: white;
+        }
+        .btn-print:hover {
+            background-color: #059669;
+        }
+        .btn-close {
+            background-color: #475569;
+            color: white;
+        }
+        .btn-close:hover {
+            background-color: #334155;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #0f172a;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+        .header h1 {
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #334155;
+            margin-bottom: 4px;
+        }
+        .header h2 {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+        .header .subtitulo {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 600;
+        }
+        .leyenda-legal {
+            font-size: 10px;
+            background-color: #f1f5f9;
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-align: center;
+            color: #475569;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #1e293b;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 4px;
+            margin-bottom: 12px;
+            margin-top: 20px;
+        }
+        .grid-datos {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            background-color: #f8fafc;
+            padding: 16px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            font-size: 13px;
+        }
+        .dato-item label {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 2px;
+        }
+        .dato-item span {
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .atenciones-list {
+            margin-top: 12px;
+        }
+        .atencion-card {
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 14px;
+            background: #ffffff;
+            page-break-inside: avoid;
+        }
+        .atencion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed #cbd5e1;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+        .atencion-fecha {
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .atencion-medico {
+            color: #334155;
+            font-weight: 600;
+        }
+        .atencion-diagnostico {
+            font-size: 13px;
+            color: #1e293b;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+        .cie10-badge {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #0369a1;
+            background-color: #e0f2fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .footer-legal {
+            margin-top: 40px;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 16px;
+            font-size: 10px;
+            color: #64748b;
+            line-height: 1.5;
+            text-align: justify;
+        }
+        .firmas-box {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 50px;
+            page-break-inside: avoid;
+        }
+        .firma-col {
+            width: 250px;
+            text-align: center;
+            border-top: 1px solid #0f172a;
+            padding-top: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+                background: white;
+                font-size: 11pt;
+            }
+            .container {
+                border: none;
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+            }
+            .no-print-bar {
+                display: none !important;
+            }
+            .atencion-card {
+                border: 1px solid #94a3b8;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="no-print-bar">
+        <div>
+            <span style="font-weight: bold; font-size: 13px;">Documento Oficial de Historia Clínica</span>
+            <p style="font-size: 11px; opacity: 0.8;">Haga clic en imprimir para generar el archivo PDF o imprimir en papel.</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button onclick="window.print()" class="btn btn-print">Imprimir / Guardar en PDF</button>
+            <button onclick="window.close()" class="btn btn-close">Cerrar</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <img src="/img/logo.svg" alt="Sanidad E.A." style="width: 58px; height: 58px; margin: 0 auto 8px auto; display: block;">
+            <h1>República Argentina &bull; Ejército Argentino</h1>
+            <h2>Compañía de Sanidad &bull; Servicio Asistencial</h2>
+            <p class="subtitulo">Copia Oficial de Historia Clínica Ambulatoria</p>
+            <div class="leyenda-legal">
+                Documento extendido de conformidad con la <b>Ley Nacional N° 26.529</b> (Derechos del Paciente) y <b>Ley N° 27.706</b> (Historia Clínica Electrónica). Carácter Reservado y Confidencial (<b>Ley N° 25.326</b>).
+            </div>
+        </header>
+
+        <h3 class="section-title">1. Datos Filiatorios del Paciente</h3>
+        <div class="grid-datos">
+            <div class="dato-item">
+                <label>Apellido y Nombre</label>
+                <span><%= escapeHTML(paciente.apellido) %>, <%= escapeHTML(paciente.nombre) %></span>
+            </div>
+            <div class="dato-item">
+                <label>D.N.I.</label>
+                <span><%= escapeHTML(paciente.dni) %></span>
+            </div>
+            <div class="dato-item">
+                <label>Grado / Escalafón</label>
+                <span><%= escapeHTML(paciente.grado || 'Sin Grado') %></span>
+            </div>
+            <div class="dato-item">
+                <label>Destino de Revista</label>
+                <span><%= escapeHTML(paciente.destino || '-') %></span>
+            </div>
+            <div class="dato-item">
+                <label>Fecha de Nacimiento</label>
+                <span><%= formatFechaDate(paciente.fecha_nacimiento) %> (<%= edad %> años)</span>
+            </div>
+            <div class="dato-item">
+                <label>Género</label>
+                <span><%= escapeHTML(paciente.genero || 'No especificado') %></span>
+            </div>
+            <div class="dato-item">
+                <label>Fecha de Expedición</label>
+                <span><%= fechaEmision %></span>
+            </div>
+            <div class="dato-item">
+                <label>Estado Registral</label>
+                <span style="color: #059669;">ACTIVO</span>
+            </div>
+            <div class="dato-item">
+                <label>Identificador Único</label>
+                <span style="font-family: monospace; font-size: 11px;"><%= paciente.id.substring(0, 13) %>...</span>
+            </div>
+        </div>
+
+        <h3 class="section-title">2. Cronología de Atenciones y Evoluciones Médicas</h3>
+        <div class="atenciones-list">
+            <% if (!atenciones || atenciones.length === 0) { %>
+                <p style="text-align: center; color: #64748b; padding: 24px; font-style: italic;">No constan registros de atención médica asentados para el paciente.</p>
+            <% } else { %>
+                <% atenciones.forEach((a, index) => { 
+                    const fechaStr = a.fecha_atencion || a.fecha_hora;
+                    const fechaCompleta = `${formatFechaDate(fechaStr)} a las ${formatHoraAR(fechaStr)} hs`;
+                %>
+                    <div class="atencion-card">
+                        <div class="atencion-header">
+                            <span class="atencion-fecha">Acto Médico #<%= atenciones.length - index %> &bull; <%= fechaCompleta %></span>
+                            <span class="atencion-medico">
+                                <b><%= a.usuarios?.grado ? escapeHTML(a.usuarios.grado) + ' ' : '' %>Med. <%= escapeHTML(a.usuarios?.nombre || 'Guardia') %></b>
+                                <% if (a.usuarios?.matricula) { %>
+                                    (Mat. Prov./Nac. <%= escapeHTML(a.usuarios.matricula) %>)
+                                <% } %>
+                            </span>
+                        </div>
+                        <div class="atencion-diagnostico"><%= escapeHTML(a.diagnostico) %></div>
+                        <% if (a.cie_10) { %>
+                            <span class="cie10-badge">Clasificación CIE-10: <%= escapeHTML(a.cie_10) %></span>
+                        <% } %>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+
+        <div class="firmas-box">
+            <div class="firma-col">
+                Firma y Sello Aclaratorio<br>
+                Oficial Médico / Jefe de Sanidad Militar
+            </div>
+        </div>
+
+        <footer class="footer-legal">
+            <b>ADVERTENCIA LEGAL DE CONFIDENCIALIDAD:</b> El contenido del presente informe clínico constituye información amparada por el Secreto Médico Profesional (Art. 156 del Código Penal de la Nación Argentina) y se encuentra tutelada bajo el régimen de Datos Sensibles de la Ley Nacional N° 25.326. Toda persona que tome conocimiento del mismo está obligada a guardar estricta reserva y responderá civil y penalmente por su divulgación no autorizada.
+        </footer>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+<div class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 transition-colors">
+    <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-200 dark:border-slate-800">
+        <div>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
+                <span>Sala de Espera Médica</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200 animate-pulse">
+                    En vivo
+                </span>
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">La lista se actualiza automáticamente cada 5 segundos.</p>
+        </div>
+    </div>
+    
+    <!-- HTMX Polling cada 5 segundos -->
+    <div id="lista-espera" 
+         hx-get="/atenciones/espera" 
+         hx-trigger="every 5s, load" 
+         hx-swap="innerHTML">
+        <div class="text-center py-12 text-slate-400 dark:text-slate-500">
+            <p class="text-sm">Cargando pacientes en espera...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para atender paciente / ver historial -->
+<div id="modal-atencion" class="hidden fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-2xl w-full p-6 md:p-8 border border-slate-200 dark:border-slate-800 max-h-[90vh] overflow-y-auto" id="modal-content">
+        <!-- El contenido se inyecta aqui -->
+    </div>
+</div>

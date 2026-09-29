@@ -1,0 +1,47 @@
+/* Custom CSS para Sanidad */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Transiciones de tema */
+html.dark {
+    color-scheme: dark;
+}
+
+/* Scrollbar estilizada */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #334155;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+/* Transiciones suaves para HTMX */
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 200ms ease-in;
+}
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+    opacity: 1;
+}

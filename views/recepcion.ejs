@@ -1,0 +1,121 @@
+<div class="space-y-6">
+    <!-- Barra Superior de Navegación de Recepción -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+        <div>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
+                <span>Recepción</span>
+                <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300">Servicio de Admisión</span>
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Gestión de guardia, control de sala de espera y nómina diaria de atenciones.</p>
+        </div>
+
+        <!-- Botones de Pestaña -->
+        <div class="flex items-center gap-2 self-stretch sm:self-auto">
+            <button id="btn-tab-admision" onclick="switchTab('admision')" class="flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-blue-600 text-white shadow-sm">
+                Admisión y Sala de Espera
+            </button>
+            <button id="btn-tab-atendidos" onclick="switchTab('atendidos')" class="flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
+                Pacientes Atendidos Hoy
+            </button>
+        </div>
+    </div>
+
+    <!-- VISTA 1: Admisión + Ventana de Sala de Espera en Vivo -->
+    <div id="view-admision" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Columna Izquierda: Buscador de Pacientes y Alta (7 cols) -->
+        <div class="lg:col-span-7 bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 transition-colors">
+            <div class="flex justify-between items-center gap-3 mb-5">
+                <div>
+                    <h3 class="font-bold text-slate-900 dark:text-slate-100 text-base">Búsqueda y Admisión</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Busque al paciente para asignarlo a un consultorio médico.</p>
+                </div>
+                <button hx-get="/pacientes/formulario-alta" hx-target="#resultado-paciente" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl text-xs font-semibold shadow-sm transition flex items-center gap-1">
+                    <span>+</span> Nuevo Paciente
+                </button>
+            </div>
+
+            <!-- Buscador inteligente -->
+            <div class="mb-5 flex gap-2">
+                <div class="relative flex-1">
+                    <input type="text" id="paciente-search" name="q" placeholder="Ingrese DNI, Nombre o Apellido..."
+                           class="w-full pl-3 pr-10 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 transition"
+                           hx-get="/pacientes/buscar" 
+                           hx-trigger="keyup changed delay:400ms, search" 
+                           hx-target="#resultado-paciente">
+                </div>
+                <button class="bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 font-semibold text-xs transition" hx-get="/pacientes/buscar" hx-include="#paciente-search" hx-target="#resultado-paciente">Buscar</button>
+            </div>
+
+            <!-- Área de resultados -->
+            <div id="resultado-paciente" class="border-t border-slate-200 dark:border-slate-800 pt-4">
+                <div class="text-center py-10 text-slate-400 dark:text-slate-500">
+                    <div class="w-10 h-10 mx-auto mb-2 text-slate-300 dark:text-slate-600 flex items-center justify-center">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <p class="text-xs">Ingrese un DNI o Apellido para iniciar la búsqueda, o registre un nuevo paciente.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Ventana Sala de Espera en Vivo (5 cols) -->
+        <div class="lg:col-span-5 bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col transition-colors">
+            <div class="flex justify-between items-center gap-2 mb-3 pb-3 border-b border-slate-200 dark:border-slate-800">
+                <div>
+                    <h3 class="font-bold text-slate-900 dark:text-slate-100 text-base flex items-center gap-2">
+                        <span>Sala de Espera en Vivo</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Actualización en tiempo real"></span>
+                    </h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Pacientes aguardando ser llamados a consultorio.</p>
+                </div>
+                <button hx-get="/atenciones/espera-general" hx-target="#lista-espera-general" class="text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition font-semibold" title="Refrescar">
+                    Actualizar
+                </button>
+            </div>
+
+            <div id="lista-espera-general" 
+                 hx-get="/atenciones/espera-general" 
+                 hx-trigger="load, every 10s, turnoAsignado from:body" 
+                 class="flex-1 overflow-y-auto max-h-[580px] pr-1">
+                <p class="text-xs text-slate-400 text-center py-8">Cargando sala de espera...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- VISTA 2: Pacientes Atendidos Hoy (Página Extra) -->
+    <div id="view-atendidos" class="hidden bg-white dark:bg-slate-900 p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 transition-colors">
+        <div id="lista-atendidos-hoy" 
+             hx-get="/atenciones/atendidos-hoy" 
+             hx-trigger="load, every 30s, turnoAsignado from:body">
+            <p class="text-xs text-slate-400 text-center py-8">Cargando nómina de pacientes atendidos hoy...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Script para alternar entre pestañas en Recepción -->
+<script>
+    function switchTab(tab) {
+        const viewAdmision = document.getElementById('view-admision');
+        const viewAtendidos = document.getElementById('view-atendidos');
+        const btnAdmision = document.getElementById('btn-tab-admision');
+        const btnAtendidos = document.getElementById('btn-tab-atendidos');
+
+        if (tab === 'admision') {
+            viewAdmision.classList.remove('hidden');
+            viewAtendidos.classList.add('hidden');
+            btnAdmision.className = "flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-blue-600 text-white shadow-sm";
+            btnAtendidos.className = "flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700";
+        } else {
+            viewAdmision.classList.add('hidden');
+            viewAtendidos.classList.remove('hidden');
+            btnAtendidos.className = "flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-blue-600 text-white shadow-sm";
+            btnAdmision.className = "flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700";
+            htmx.trigger('#lista-atendidos-hoy', 'load');
+        }
+    }
+</script>
+
+<!-- Modal Compartido -->
+<div id="modal-atencion" class="hidden fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-xl w-full p-6 border border-slate-200 dark:border-slate-800 max-h-[90vh] overflow-y-auto" id="modal-content">
+    </div>
+</div>
