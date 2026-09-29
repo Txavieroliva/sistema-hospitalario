@@ -4,17 +4,17 @@ const path = require('path');
 const CONFIG_PATH = path.join(__dirname, '..', 'config', 'autoridades.json');
 
 const DEFAULT_AUTORIDADES = {
-    codigo_unidad: 'U20004',
-    nombre_unidad: 'Cuartel General- EMGE',
-    lema_anio: 'Año de la Grandeza Argentina',
-    jefe_unidad_nombre: 'CR C JUAN MIGUEL ALBORNOZ',
-    jefe_unidad_cargo: 'J Cu Grl EMGE',
-    jefe_sanidad_nombre: 'TC Med Diego CORDERO',
-    jefe_sanidad_cargo: 'J Ca San-Cu Grl EMGE',
-    responsable_nombre: 'SG Enf Grl Gustavo Joel CRUZ',
+    codigo_unidad: 'HOSP-01',
+    nombre_unidad: 'Hospital Central de Agudos',
+    lema_anio: 'Excelencia Médica y Compromiso Asistencial',
+    jefe_unidad_nombre: 'Dr. Alberto Fernández Rivas',
+    jefe_unidad_cargo: 'Director Médico General',
+    jefe_sanidad_nombre: 'Dra. Carolina Martínez',
+    jefe_sanidad_cargo: 'Jefa de Servicios Médicos y Admisión',
+    responsable_nombre: 'Lic. Esteban Morales',
     provincia: 'Buenos Aires',
     ciudad: 'CABA',
-    circunstancia: '2B'
+    circunstancia: 'Servicio General'
 };
 
 function getAutoridadesConfig() {
@@ -48,62 +48,39 @@ function saveAutoridadesConfig(newConfig) {
 }
 
 /**
- * Mapea la jerarquía militar del paciente a la Categoría oficial de la Directiva Técnica 03/23:
- * 1: Oficiales (Subteniente hasta Teniente General)
- * 2: Suboficiales (Cabo hasta Suboficial Mayor)
- * 3: Soldados Voluntarios (SV)
- * 4: Cadetes / Aspirantes
- * 5: Agentes Civiles / Personal Civil (AC)
+ * Mapea la cobertura médica / obra social del paciente a categorías hospitalarias:
+ * 1: Prepagas / Privados (OSDE, Swiss Medical, Galeno, Medifé)
+ * 2: Obras Sociales (IOMA, OSECAC, etc.)
+ * 3: PAMI / Adultos Mayores
+ * 4: Derivación / Interconsulta
+ * 5: Particular / Sin Cobertura
  */
-function mapearCategoriaMilitar(grado) {
-    if (!grado) return 3;
-    const g = String(grado).trim().toUpperCase();
+function mapearCategoriaCobertura(gradoOrCobertura) {
+    if (!gradoOrCobertura) return 1;
+    const g = String(gradoOrCobertura).trim().toUpperCase();
 
-    // Oficiales (1)
-    const oficiales = [
-        'SUBTENIENTE', 'TENIENTE', 'TENIENTE PRIMERO', 'CAPITAN', 'CAPITÁN',
-        'MAYOR', 'TENIENTE CORONEL', 'CORONEL', 'GENERAL DE BRIGADA',
-        'GENERAL DE DIVISION', 'GENERAL DE DIVISIÓN', 'TENIENTE GENERAL',
-        'GENERAL', 'OFICIAL', 'ST', 'TT', 'TP', 'CAP', 'MY', 'TC', 'CR', 'GB', 'GD', 'TG'
-    ];
-    if (oficiales.some(o => g === o || g.startsWith(o + ' ') || g.endsWith(' ' + o))) {
+    // Prepagas (1)
+    if (g.includes('OSDE') || g.includes('SWISS') || g.includes('GALENO') || g.includes('MEDIFE') || g.includes('PREPAGA')) {
         return 1;
     }
-
-    // Suboficiales (2)
-    const suboficiales = [
-        'CABO', 'CABO PRIMERO', 'SARGENTO', 'SARGENTO PRIMERO',
-        'SARGENTO AYUDANTE', 'SUBOFICIAL PRINCIPAL', 'SUBOFICIAL MAYOR',
-        'SUBOFICIAL', 'SUBOFICAL', 'CB', 'CI', 'SG', 'SI', 'SA', 'SP', 'SM'
-    ];
-    if (suboficiales.some(s => g === s || g.startsWith(s + ' ') || g.endsWith(' ' + s))) {
+    // Obras Sociales (2)
+    if (g.includes('IOMA') || g.includes('OSECAC') || g.includes('OBRA') || g.includes('SINDICAL')) {
         return 2;
     }
-
-    // Agentes Civiles / Personal Civil (5)
-    const civiles = ['AC', 'AGENTE CIVIL', 'PERSONAL CIVIL', 'DOCENTE CIVIL', 'CIVIL'];
-    if (civiles.some(c => g === c || g.startsWith(c + ' ') || g.endsWith(' ' + c))) {
+    // PAMI (3)
+    if (g.includes('PAMI') || g.includes('JUBILADO')) {
+        return 3;
+    }
+    // Particular (5)
+    if (g.includes('PARTICULAR') || g.includes('CIVIL') || g.includes('SIN COBERTURA')) {
         return 5;
     }
 
-    // Cadetes / Aspirantes (4)
-    const cadetes = ['CADETE', 'ASPIRANTE', 'CAD', 'ASP'];
-    if (cadetes.some(c => g === c || g.startsWith(c + ' '))) {
-        return 4;
-    }
-
-    // Soldados Voluntarios (3)
-    const soldados = ['SV', 'SOLDADO', 'VOLUNTARIO', 'SOLDADO VOLUNTARIO'];
-    if (soldados.some(s => g === s || g.startsWith(s + ' ') || g.includes('SV'))) {
-        return 3;
-    }
-
-    return 3;
+    return 1;
 }
 
 /**
- * Diccionario de equivalencias epidemiológicas de CIE-10 (utilizado por el médico en guardia)
- * hacia CIE-11 (exigido por la DGS en la Directiva Técnica 03/23).
+ * Diccionario de equivalencias epidemiológicas de CIE-10 a CIE-11 (Estándar OMS).
  */
 const DICCIONARIO_CIE10_A_CIE11 = {
     // Respiratorio
@@ -230,7 +207,7 @@ function calcularEdad(fechaNacimiento, fechaAtencion) {
 module.exports = {
     getAutoridadesConfig,
     saveAutoridadesConfig,
-    mapearCategoriaMilitar,
+    mapearCategoriaCobertura,
     mapearCIE10aCIE11,
     calcularEdad
 };

@@ -68,7 +68,7 @@ app.get('/', (req, res) => {
     if (user_role === 'RECEPCION') return res.redirect('/recepcion');
     if (user_role === 'MEDICO') return res.redirect('/medico');
 
-    res.render('layout', { title: 'Acceso - Sistema Hospitalario', view: 'login', user: null });
+    res.render('layout', { title: 'Acceso', view: 'login', user: null });
 });
 
 app.get('/recepcion', requireAuth(['RECEPCION', 'ADMIN']), (req, res) => {

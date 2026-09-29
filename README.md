@@ -7,7 +7,7 @@ Este proyecto es una réplica sintética y desacoplada de un sistema real de ges
 ## 🛡️ Seguridad, Privacidad y Gobernanza de Datos (Compliance)
 
 * **100% Datos Sintéticos:** Todos los pacientes, números de documento (DNI), médicos y notas clínicas son ficticios y generados por algoritmos reproducibles.
-* **Sin Dependencias Militares ni Privadas:** Se eliminaron grados, escalafones y destinos militares, reemplazándolos por una estructura hospitalaria civil estándar (Especialidades médicas, Servicios de Guardia/Consultorios, y Coberturas de Salud).
+* **Estructura Hospitalaria Estándar y Civil:** Arquitectura abierta orientada a centros de salud modernos (Especialidades médicas, Servicios de Guardia/Consultorios, Obras Sociales y Coberturas de Salud).
 * **Códigos Médicos Estándar:** Utiliza la codificación diagnóstica oficial **CIE-10 (Clasificación Internacional de Enfermedades de la OMS)**.
 
 ---

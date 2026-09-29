@@ -285,7 +285,7 @@ router.get('/historial/:paciente_id', async (req, res) => {
 
     const { data: partes } = await req.supabase
         .from('partes_enfermo')
-        .select('*, usuarios(nombre, matricula, grado)')
+        .select('*, usuarios(nombre, matricula, especialidad)')
         .eq('paciente_id', paciente_id)
         .order('created_at', { ascending: false });
 
@@ -293,7 +293,7 @@ router.get('/historial/:paciente_id', async (req, res) => {
 
     let partesHtml = '';
     if (!partes || partes.length === 0) {
-        partesHtml = `<p class="text-gray-500 dark:text-slate-400 text-center py-6">No registra partes de enfermo anteriores.</p>`;
+        partesHtml = `<p class="text-gray-500 dark:text-slate-400 text-center py-6">No registra partes de reposo médico anteriores.</p>`;
     } else {
         partesHtml = partes.map((p, idx) => {
             const extensiones = Array.isArray(p.historial_extensiones) ? p.historial_extensiones : [];
@@ -342,7 +342,7 @@ router.get('/historial/:paciente_id', async (req, res) => {
                     </div>
                     ${p.diagnostico ? `<p class="text-sm text-gray-700 dark:text-slate-300 italic bg-gray-50 dark:bg-slate-900/50 p-2 rounded border border-gray-100 dark:border-slate-800">${escapeHTML(p.diagnostico)}</p>` : ''}
                     <div class="flex justify-between text-xs text-gray-500 dark:text-slate-400 pt-1">
-                        <span>Médico inicial: ${p.usuarios?.grado ? escapeHTML(p.usuarios.grado) + ' ' : ''}Med ${escapeHTML(p.usuarios?.nombre || '-')}</span>
+                        <span>Médico: Dr/a. ${escapeHTML(p.usuarios?.nombre || '-')} (${escapeHTML(p.usuarios?.especialidad || 'Guardia')})</span>
                         <span>Emitido: ${formatFechaDate(p.created_at)}</span>
                     </div>
                     ${extensionsHtml}

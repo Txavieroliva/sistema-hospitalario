@@ -3,54 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESTAMED - Anexo 1 - <%= periodoNombre %></title>
+    <title>Reporte Estadístico - <%= periodoNombre %> - Sistema Hospitalario</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @page {
-            size: landscape;
-            margin: 10mm 12mm;
-        }
-        body {
-            font-family: 'Times New Roman', Times, serif;
-            color: #000;
-            background-color: #fff;
-        }
         @media print {
-            .no-print {
-                display: none !important;
-            }
-            body {
-                background: transparent;
-                padding: 0;
-            }
-            .page-break {
-                page-break-after: always;
+            body { background: #ffffff !important; }
+            .no-print { display: none !important; }
+            @page {
+                size: A4 portrait;
+                margin: 12mm 10mm 15mm 10mm;
             }
         }
         table {
             border-collapse: collapse;
             width: 100%;
-        }
-        th, td {
-            border: 1px solid #777;
-            padding: 3px 6px;
             font-size: 11px;
         }
+        th, td {
+            border: 1px solid #000000;
+            padding: 4px 6px;
+        }
         th {
-            background-color: #f2f2f2 !important;
-            font-weight: bold;
-            text-align: center;
+            background-color: #f1f5f9;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 10px;
         }
     </style>
 </head>
-<body class="p-4 sm:p-8 max-w-7xl mx-auto">
+<body class="bg-slate-100 text-slate-900 font-sans p-4 sm:p-6 print:p-0">
 
-    <!-- Barra de Herramientas Flotante (no se imprime) -->
-    <div class="no-print bg-slate-900 text-white p-4 rounded-xl shadow-lg mb-6 flex flex-wrap justify-between items-center gap-3">
+    <!-- Barra Superior de Control (Oculta en Impresión) -->
+    <div class="no-print max-w-5xl mx-auto mb-6 bg-slate-900 text-white p-4 rounded-xl shadow-md flex flex-wrap justify-between items-center gap-3">
         <div class="flex items-center gap-3">
-            <span class="text-xs bg-blue-600 px-2.5 py-1 rounded font-mono font-bold uppercase">ESTAMED DGS 03/23</span>
+            <span class="text-xs bg-blue-600 px-2.5 py-1 rounded font-mono font-bold uppercase">GESTIÓN CLÍNICA</span>
             <div>
-                <h1 class="font-bold text-sm leading-tight">Planilla Oficial de Estadísticas Médicas</h1>
+                <h1 class="font-bold text-sm leading-tight">Planilla Oficial de Estadísticas Médicas y Epidemiología</h1>
                 <p class="text-xs text-slate-300">Período: <span class="font-semibold text-white"><%= periodoNombre %></span> | Total: <span class="font-bold text-emerald-400"><%= filas.length %> registros</span></p>
             </div>
         </div>
@@ -67,63 +55,62 @@
         </div>
     </div>
 
-    <!-- DOCUMENTO OFICIAL ESTAMED -->
-    <div class="bg-white border border-gray-300 p-6 sm:p-8 rounded-sm shadow-sm print:border-0 print:p-0 print:shadow-none">
+    <!-- DOCUMENTO OFICIAL HOSPITALARIO -->
+    <div class="bg-white border border-gray-300 p-6 sm:p-8 rounded-sm shadow-sm print:border-0 print:p-0 print:shadow-none max-w-5xl mx-auto">
         
         <!-- Encabezado Superior -->
         <div class="flex justify-between items-start text-xs mb-2">
             <div>
-                <p class="text-base font-bold tracking-wide">Ejército Argentino</p>
+                <p class="text-base font-bold tracking-wide text-blue-900">Sistema Hospitalario Central</p>
                 <p class="text-xs text-gray-800"><%= autoridades.nombre_unidad %></p>
             </div>
-            <div class="text-right italic text-xs">
+            <div class="text-right italic text-xs text-gray-600">
                 <p>“<%= autoridades.lema_anio %>”</p>
             </div>
         </div>
 
-        <!-- Recuadro Reglamentario de Seguridad Militar -->
-        <div class="border border-black my-3 p-2 max-w-xl mx-auto text-center">
-            <p class="font-bold text-xs tracking-wider">PUBLICO MILITAR</p>
-            <p class="font-bold text-[11px] tracking-wider mt-0.5">ADVERTENCIA</p>
-            <p class="text-[10px] leading-tight text-gray-800 mt-0.5">
-                Este documento es de carácter <b>PUBLICO MILITAR</b> y el conocimiento de su contenido está limitado exclusivamente al personal de la Fuerza, siempre y cuando por orden de la autoridad superior no se dispusiere lo contrario (ROP-11-06 Art. 2.013 Inc e)
+        <!-- Recuadro de Confidencialidad y Gobernanza de Datos -->
+        <div class="border border-gray-400 my-3 p-2 max-w-2xl mx-auto text-center bg-gray-50">
+            <p class="font-bold text-xs tracking-wider text-gray-900">CONFIDENCIALIDAD MÉDICA Y PROTECCIÓN DE DATOS</p>
+            <p class="text-[10px] leading-tight text-gray-700 mt-0.5">
+                Reporte de vigilancia epidemiológica y gestión de capacidad asistencial. Documento con datos despersonalizados y anonimizados con fines estadísticos y de control de calidad.
             </p>
         </div>
 
         <!-- Título Normativo -->
         <div class="text-center my-3">
-            <h2 class="text-xs font-bold uppercase tracking-tight">
-                ANEXO 1- (ESTAMED) A LA DIRECTIVA TECNICA DEL DIRECTOR GENERAL DE SALUD NRO 03/23 (Estadísticas Médicas)
+            <h2 class="text-xs font-bold uppercase tracking-tight text-slate-900">
+                INFORME CONSOLIDADO DE ATENCIONES MÉDICAS, DIAGNÓSTICOS Y DERIVACIONES
             </h2>
         </div>
 
-        <!-- Datos de la Unidad y Autoridades Responsables -->
+        <!-- Datos Institucionales -->
         <div class="text-xs space-y-1 mb-4 pb-2 border-b border-gray-400">
             <div class="grid grid-cols-3 gap-2">
-                <div><b>Código de Unidad:</b> <%= autoridades.codigo_unidad %></div>
+                <div><b>Código Hospitalario:</b> <%= autoridades.codigo_unidad %></div>
                 <div class="text-center"><b>Período:</b> <%= periodoNombre %></div>
                 <div class="text-right"><b>Fecha de Emisión:</b> <%= fechaEmision %></div>
             </div>
-            <div><b>Nombre del Jefe de Unidad:</b> <%= autoridades.jefe_unidad_nombre %></div>
-            <div><b>Nombre del Jefe del Servicio de Sanidad:</b> <%= autoridades.jefe_sanidad_nombre %></div>
-            <div><b>Nombre del Responsable Directo:</b> <%= autoridades.responsable_nombre %></div>
+            <div><b>Director Médico General:</b> <%= autoridades.jefe_unidad_nombre %></div>
+            <div><b>Jefe de Servicios Médicos:</b> <%= autoridades.jefe_sanidad_nombre %></div>
+            <div><b>Coordinador de Estadísticas:</b> <%= autoridades.responsable_nombre %></div>
         </div>
 
-        <!-- TABLA REGLAMENTARIA ESTAMED (10 COLUMNAS - SIN NOMBRES NI DNI) -->
+        <!-- TABLA OFICIAL (10 COLUMNAS - SIN NOMBRES NI DNI) -->
         <div class="overflow-x-auto">
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 12%;">UUMM</th>
-                        <th style="width: 12%;">Provincia</th>
-                        <th style="width: 8%;">Ciudad</th>
+                        <th style="width: 14%;">Servicio</th>
+                        <th style="width: 11%;">Provincia</th>
+                        <th style="width: 9%;">Ciudad</th>
                         <th style="width: 10%;">Fecha</th>
                         <th style="width: 6%;">Edad</th>
-                        <th style="width: 10%;">Genero</th>
+                        <th style="width: 8%;">Género</th>
                         <th style="width: 10%;">CIE-11</th>
-                        <th style="width: 8%;">Categoria</th>
-                        <th style="width: 10%;">Circunstancia</th>
-                        <th style="width: 8%;">Derivacion</th>
+                        <th style="width: 10%;">Cobertura</th>
+                        <th style="width: 12%;">Área / Turno</th>
+                        <th style="width: 10%;">Derivación</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -136,16 +123,16 @@
                     <% } else { %>
                         <% filas.forEach(function(f) { %>
                             <tr>
-                                <td class="text-center font-medium"><%= f.uumm %></td>
+                                <td class="text-center font-medium"><%= f.servicio %></td>
                                 <td class="text-center"><%= f.provincia %></td>
                                 <td class="text-center"><%= f.ciudad %></td>
                                 <td class="text-center font-mono"><%= f.fecha %></td>
                                 <td class="text-center font-mono"><%= f.edad !== null ? f.edad : '-' %></td>
                                 <td class="text-center"><%= f.genero %></td>
-                                <td class="text-center font-mono font-bold"><%= f.cie11 %></td>
-                                <td class="text-center font-mono font-semibold"><%= f.categoria %></td>
+                                <td class="text-center font-mono font-bold text-blue-700"><%= f.cie11 %></td>
+                                <td class="text-center font-mono font-semibold">Cat <%= f.categoria %></td>
                                 <td class="text-center font-mono"><%= f.circunstancia %></td>
-                                <td class="text-center font-bold text-red-700"><%= f.derivacion || '' %></td>
+                                <td class="text-center font-bold text-red-700"><%= f.derivacion || '-' %></td>
                             </tr>
                         <% }); %>
                     <% } %>
@@ -153,33 +140,25 @@
             </table>
         </div>
 
-        <!-- Pie Oficial con Lugar, Fecha y Bloques de Firma -->
-        <div class="mt-6 pt-2">
+        <!-- Pie Oficial de Firma -->
+        <div class="mt-8 pt-2">
             <p class="text-xs text-right pr-2 mb-6">
-                CIUDAD AUTÓNOMA DE BUENOS AIRES,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= fechaPie %>
+                BUENOS AIRES,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= fechaPie %>
             </p>
 
-            <div class="grid grid-cols-10 gap-2 items-start text-xs mt-6">
-                <!-- Izquierda: Casillero de la Unidad (Columna A: Ca San / Cu Grl y 3 celdas vacías reglamentarias, total 4) -->
-                <div class="col-span-2 text-center text-xs">
-                    <div class="border border-black p-1 text-[11px] leading-tight font-normal">Ca San<br>Cu Grl</div>
-                    <div class="border-x border-b border-black py-2.5">&nbsp;</div>
-                    <div class="border-x border-b border-black py-2.5">&nbsp;</div>
-                    <div class="border-x border-b border-black py-2.5">&nbsp;</div>
+            <div class="grid grid-cols-2 gap-8 items-start text-xs mt-6">
+                <!-- Izquierda: Jefe de Servicios Médicos -->
+                <div class="text-center px-4 pt-1 border-t border-gray-400">
+                    <p class="font-bold tracking-wider text-[11px] mb-1">RESPONSABLE ASISTENCIAL</p>
+                    <p class="text-xs text-black font-semibold uppercase"><%= autoridades.jefe_sanidad_nombre %></p>
+                    <p class="text-[10px] text-gray-700"><%= autoridades.jefe_sanidad_cargo %></p>
                 </div>
 
-                <!-- Centro: Jefe de Sanidad -->
-                <div class="col-span-4 text-center px-4 pt-1">
-                    <p class="font-bold tracking-wider text-[11px] mb-1">FIRMADO</p>
-                    <p class="text-xs text-black font-normal uppercase"><%= autoridades.jefe_sanidad_nombre %></p>
-                    <p class="text-[10px] text-gray-800"><%= autoridades.jefe_sanidad_cargo %></p>
-                </div>
-
-                <!-- Derecha: Jefe de Unidad -->
-                <div class="col-span-4 text-center px-4 pt-1">
-                    <p class="font-bold tracking-wider text-[11px] mb-1">FIRMADO</p>
-                    <p class="text-xs text-black font-normal uppercase"><%= autoridades.jefe_unidad_nombre %></p>
-                    <p class="text-[10px] text-gray-800"><%= autoridades.jefe_unidad_cargo %></p>
+                <!-- Derecha: Director Médico General -->
+                <div class="text-center px-4 pt-1 border-t border-gray-400">
+                    <p class="font-bold tracking-wider text-[11px] mb-1">DIRECCIÓN MÉDICA GENERAL</p>
+                    <p class="text-xs text-black font-semibold uppercase"><%= autoridades.jefe_unidad_nombre %></p>
+                    <p class="text-[10px] text-gray-700"><%= autoridades.jefe_unidad_cargo %></p>
                 </div>
             </div>
         </div>

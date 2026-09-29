@@ -598,7 +598,7 @@ router.get('/atender/:id', isMedicoOrAdmin, async (req, res) => {
             <div class="pt-1">
                 <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-gray-700 dark:text-slate-300">
                     <input type="checkbox" name="derivado" value="true" class="rounded border-gray-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 w-4 h-4">
-                    <span>¿Paciente derivado a Centro Externo / Hospital Militar? (Marca 'X' en ESTAMED)</span>
+                    <span>¿Paciente derivado a Centro de Mayor Complejidad / Especializado? (Marca 'X' en reporte)</span>
                 </label>
             </div>
 

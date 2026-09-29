@@ -239,9 +239,9 @@
 
     <div class="container">
         <header class="header">
-            <img src="/img/logo.svg" alt="Sanidad E.A." style="width: 58px; height: 58px; margin: 0 auto 8px auto; display: block;">
-            <h1>República Argentina &bull; Ejército Argentino</h1>
-            <h2>Compañía de Sanidad &bull; Servicio Asistencial</h2>
+            <img src="/img/logo.svg" alt="Sistema Hospitalario" style="width: 58px; height: 58px; margin: 0 auto 8px auto; display: block;">
+            <h1>Sistema Hospitalario Central</h1>
+            <h2>Servicio de Atención Médica y Registro Clínico</h2>
             <p class="subtitulo">Copia Oficial de Historia Clínica Ambulatoria</p>
             <div class="leyenda-legal">
                 Documento extendido de conformidad con la <b>Ley Nacional N° 26.529</b> (Derechos del Paciente) y <b>Ley N° 27.706</b> (Historia Clínica Electrónica). Carácter Reservado y Confidencial (<b>Ley N° 25.326</b>).
@@ -259,12 +259,12 @@
                 <span><%= escapeHTML(paciente.dni) %></span>
             </div>
             <div class="dato-item">
-                <label>Grado / Escalafón</label>
-                <span><%= escapeHTML(paciente.grado || 'Sin Grado') %></span>
+                <label>Cobertura / Obra Social</label>
+                <span><%= escapeHTML(paciente.obra_social || paciente.grado || 'Particular') %></span>
             </div>
             <div class="dato-item">
-                <label>Destino de Revista</label>
-                <span><%= escapeHTML(paciente.destino || '-') %></span>
+                <label>Servicio Asistencial</label>
+                <span><%= escapeHTML(paciente.servicio || paciente.destino || 'Consultorios Externos') %></span>
             </div>
             <div class="dato-item">
                 <label>Fecha de Nacimiento</label>
@@ -284,7 +284,7 @@
             </div>
             <div class="dato-item">
                 <label>Identificador Único</label>
-                <span style="font-family: monospace; font-size: 11px;"><%= paciente.id.substring(0, 13) %>...</span>
+                <span style="font-family: monospace; font-size: 11px;"><%= String(paciente.id).substring(0, 13) %>...</span>
             </div>
         </div>
 
@@ -301,9 +301,9 @@
                         <div class="atencion-header">
                             <span class="atencion-fecha">Acto Médico #<%= atenciones.length - index %> &bull; <%= fechaCompleta %></span>
                             <span class="atencion-medico">
-                                <b><%= a.usuarios?.grado ? escapeHTML(a.usuarios.grado) + ' ' : '' %>Med. <%= escapeHTML(a.usuarios?.nombre || 'Guardia') %></b>
+                                <b><%= a.usuarios?.especialidad ? escapeHTML(a.usuarios.especialidad) + ' ' : '' %>Dr/a. <%= escapeHTML(a.usuarios?.nombre || 'Guardia') %></b>
                                 <% if (a.usuarios?.matricula) { %>
-                                    (Mat. Prov./Nac. <%= escapeHTML(a.usuarios.matricula) %>)
+                                    (Mat. Prof. <%= escapeHTML(a.usuarios.matricula) %>)
                                 <% } %>
                             </span>
                         </div>
@@ -319,7 +319,7 @@
         <div class="firmas-box">
             <div class="firma-col">
                 Firma y Sello Aclaratorio<br>
-                Oficial Médico / Jefe de Sanidad Militar
+                Profesional Médico Tratante
             </div>
         </div>
 

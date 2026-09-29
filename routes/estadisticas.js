@@ -4,7 +4,7 @@ const ExcelJS = require('exceljs');
 const {
     getAutoridadesConfig,
     saveAutoridadesConfig,
-    mapearCategoriaMilitar,
+    mapearCategoriaCobertura,
     mapearCIE10aCIE11,
     calcularEdad
 } = require('../utils/estamed_helpers');
@@ -100,7 +100,8 @@ async function obtenerAtencionesPeriodo(supabase, inicioISO, finISO, destinoFilt
         if (!chunk || chunk.length === 0) break;
 
         chunk.forEach(a => {
-            if (!destinoFiltro || destinoFiltro === 'TODOS' || a.pacientes?.destino === destinoFiltro) {
+            const serv = a.pacientes?.servicio || a.pacientes?.destino;
+            if (!destinoFiltro || destinoFiltro === 'TODOS' || serv === destinoFiltro) {
                 atenciones.push(a);
             }
         });
@@ -134,9 +135,9 @@ router.get('/datos', async (req, res) => {
 
     atenciones.forEach(a => {
         const p = a.pacientes || {};
-        const cat = mapearCategoriaMilitar(p.grado);
+        const cat = mapearCategoriaCobertura(p.obra_social || p.grado);
         if (categorias[cat] !== undefined) categorias[cat]++;
-        else categorias[3]++;
+        else categorias[1]++;
 
         const gen = p.genero === 'Femenino' ? 'Femenino' : 'Masculino';
         generos[gen]++;
@@ -157,7 +158,7 @@ router.get('/datos', async (req, res) => {
                            (a.diagnostico && a.diagnostico.toLowerCase().includes('derivad'));
         if (esDerivado) derivaciones++;
 
-        const dest = (p.destino || 'SIN DESTINO').trim().toUpperCase();
+        const dest = (p.servicio || p.destino || 'Consultorios Externos').trim();
         destinosMap[dest] = (destinosMap[dest] || 0) + 1;
 
         const cie11 = mapearCIE10aCIE11(a.cie_10 || a.diagnostico);
@@ -222,12 +223,12 @@ router.get('/estamed/imprimir', async (req, res) => {
         const fechaStr = fAtencion ? fAtencion.slice(0, 10) : '-';
         const edad = calcularEdad(p.fecha_nacimiento, fAtencion);
         const cie11 = mapearCIE10aCIE11(a.cie_10 || a.diagnostico);
-        const categoria = mapearCategoriaMilitar(p.grado);
+        const categoria = mapearCategoriaCobertura(p.obra_social || p.grado);
         const esDerivado = (a.firma_digital && a.firma_digital.includes('DERIVADO')) ||
                            (a.diagnostico && a.diagnostico.toLowerCase().includes('derivad'));
 
         return {
-            uumm: (p.destino || 'CU GRL').trim().toUpperCase(),
+            servicio: (p.servicio || p.destino || 'CONSULTORIOS EXTERNOS').trim().toUpperCase(),
             provincia: autoridades.provincia || 'Buenos Aires',
             ciudad: autoridades.ciudad || 'CABA',
             fecha: fechaStr,
@@ -280,7 +281,7 @@ router.get('/estamed/excel', async (req, res) => {
 
     // Anchos de columna idénticos a la planilla de referencia
     ws.columns = [
-        { width: 14 }, // A: UUMM
+        { width: 14 }, // A: Servicio
         { width: 14 }, // B: Provincia
         { width: 10 }, // C: Ciudad
         { width: 13 }, // D: Fecha
@@ -303,11 +304,11 @@ router.get('/estamed/excel', async (req, res) => {
     ws.getCell('A3').value = autoridades.nombre_unidad;
     ws.getCell('A3').font = { name: 'Times New Roman', size: 14, bold: true, italic: true };
 
-    // Cuadro reglamentario 1: PUBLICO MILITAR (centrado en filas 2 a 3, columnas D a G)
+    // Cuadro hospitalario 1: REPORTE CLÍNICO (centrado en filas 2 a 3, columnas D a G)
     ws.mergeCells('D2:G3');
     const cellPub = ws.getCell('D2');
-    cellPub.value = 'PUBLICO MILITAR';
-    cellPub.font = { name: 'Times New Roman', size: 12, bold: true };
+    cellPub.value = 'REPORTE CLÍNICO ESTADÍSTICO';
+    cellPub.font = { name: 'Times New Roman', size: 11, bold: true };
     cellPub.alignment = { horizontal: 'center', vertical: 'middle' };
     cellPub.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFFFF' } };
 
@@ -323,17 +324,17 @@ router.get('/estamed/excel', async (req, res) => {
         }
     }
 
-    // Cuadro reglamentario 2: ADVERTENCIA (centrado en filas 5 a 9, columnas C a G)
+    // Cuadro hospitalario 2: CONFIDENCIALIDAD MÉDICA (centrado en filas 5 a 9, columnas C a G)
     ws.mergeCells('D5:G5');
     const cellAdvTitle = ws.getCell('D5');
-    cellAdvTitle.value = 'ADVERTENCIA';
+    cellAdvTitle.value = 'CONFIDENCIALIDAD MÉDICA';
     cellAdvTitle.font = { name: 'Times New Roman', size: 10, bold: true };
     cellAdvTitle.alignment = { horizontal: 'center', vertical: 'middle' };
     cellAdvTitle.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFFFF' } };
 
     ws.mergeCells('D6:G9');
     const cellAdvText = ws.getCell('D6');
-    cellAdvText.value = 'Este documento es de carácter PUBLICO MILITAR y el conocimiento de su contenido está limitado exclusivamente al personal de la Fuerza, siempre y cuando por orden de la autoridad superior no se dispusiere lo contrario(ROP-11-06 Art. 2.013 Inc e)';
+    cellAdvText.value = 'Documento estadístico hospitalario despersonalizado con fines de análisis epidemiológico, control de calidad y gestión de capacidad asistencial.';
     cellAdvText.font = { name: 'Times New Roman', size: 9 };
     cellAdvText.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
     cellAdvText.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFFFF' } };
@@ -352,7 +353,7 @@ router.get('/estamed/excel', async (req, res) => {
 
     // Fila 13: Título Normativo
     ws.mergeCells('A13:J13');
-    ws.getCell('A13').value = 'ANEXO 1- (ESTAMED) A LA DIRECTIVA TECNICA DEL DIRECTOR GENERAL DE SALUD NRO 03/23 (Estadísticas Médicas)';
+    ws.getCell('A13').value = 'INFORME CONSOLIDADO DE ATENCIONES MÉDICAS, DIAGNÓSTICOS Y DERIVACIONES';
     ws.getCell('A13').font = { name: 'Calibri', size: 10, bold: false };
     ws.getCell('A13').alignment = { horizontal: 'left', vertical: 'middle' };
 
@@ -398,7 +399,7 @@ router.get('/estamed/excel', async (req, res) => {
     }
 
     // Fila 22: Encabezado de la tabla de 10 columnas
-    const headers = ['UUMM', 'Provincia', 'Ciudad', 'Fecha', 'Edad', 'Genero', 'CIE-11', 'Categoria', 'Circunstancia', 'Derivacion'];
+    const headers = ['Servicio', 'Provincia', 'Ciudad', 'Fecha', 'Edad', 'Genero', 'CIE-11', 'Cobertura', 'Tipo Consulta', 'Derivacion'];
     headers.forEach((h, idx) => {
         const cell = ws.getCell(22, idx + 1);
         cell.value = h;
@@ -420,12 +421,12 @@ router.get('/estamed/excel', async (req, res) => {
         const fechaVal = fAtencion ? new Date(fAtencion) : null;
         const edad = calcularEdad(p.fecha_nacimiento, fAtencion);
         const cie11 = mapearCIE10aCIE11(a.cie_10 || a.diagnostico);
-        const categoria = mapearCategoriaMilitar(p.grado);
+        const categoria = mapearCategoriaCobertura(p.obra_social || p.grado);
         const esDerivado = (a.firma_digital && a.firma_digital.includes('DERIVADO')) ||
                            (a.diagnostico && a.diagnostico.toLowerCase().includes('derivad'));
 
         const rowValues = [
-            (p.destino || 'CU GRL').trim().toUpperCase(),
+            (p.servicio || p.destino || 'CONSULTORIOS EXTERNOS').trim().toUpperCase(),
             autoridades.provincia || 'Buenos Aires',
             autoridades.ciudad || 'CABA',
             fechaVal,
@@ -478,9 +479,9 @@ router.get('/estamed/excel', async (req, res) => {
     // Fila 1 de Firmas (rowFirmas):
     ws.getRow(rowFirmas).height = 27.75;
 
-    // Columna A: Box con "Ca San\nCu Grl"
+    // Columna A: Box con Dirección Médica
     const cellA1 = ws.getCell(`A${rowFirmas}`);
-    cellA1.value = 'Ca San                     Cu Grl';
+    cellA1.value = 'Dirección Médica\nHospital Central';
     cellA1.font = { name: 'Times New Roman', size: 11 };
     cellA1.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
     cellA1.border = { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } };
@@ -530,7 +531,7 @@ router.get('/estamed/excel', async (req, res) => {
     cellA4.border = { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } };
 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', `attachment; filename="ESTAMED_Anexo1_${periodoSlug}.xlsx"`);
+    res.setHeader('Content-Disposition', `attachment; filename="Reporte_Estadistico_Hospitalario_${periodoSlug}.xlsx"`);
 
     await workbook.xlsx.write(res);
     res.end();
@@ -588,8 +589,8 @@ router.get('/autoridades-modal', (req, res) => {
         <div class="p-2 sm:p-4">
             <div class="flex justify-between items-center pb-3 mb-4 border-b border-slate-200 dark:border-slate-800">
                 <div>
-                    <h3 class="font-bold text-slate-900 dark:text-slate-100 text-base">Configuración de Autoridades Militares</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Datos institucionales para el membrete y firmas de la planilla ESTAMED (DGS 03/23).</p>
+                    <h3 class="font-bold text-slate-900 dark:text-slate-100 text-base">Configuración de Autoridades Médicas</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Datos institucionales para el membrete y firmas de reportes clínicos hospitalarios.</p>
                 </div>
                 <button onclick="document.getElementById('modal-atencion').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-2xl font-bold">&times;</button>
             </div>
@@ -599,25 +600,25 @@ router.get('/autoridades-modal', (req, res) => {
             <form hx-post="/estadisticas/autoridades" hx-target="#msg-autoridades" class="space-y-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Código de Unidad</label>
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Código de Hospital / Centro</label>
                         <input type="text" name="codigo_unidad" value="${escapar(a.codigo_unidad)}" required class="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-xs font-mono">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nombre de la Unidad</label>
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nombre del Hospital</label>
                         <input type="text" name="nombre_unidad" value="${escapar(a.nombre_unidad)}" required class="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-xs">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Lema / Frase Institucional del Año</label>
-                    <input type="text" name="lema_anio" value="${escapar(a.lema_anio)}" placeholder="Ej: Año de la Grandeza Argentina" required class="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-xs">
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Lema / Frase Institucional</label>
+                    <input type="text" name="lema_anio" value="${escapar(a.lema_anio)}" placeholder="Ej: Excelencia Médica y Compromiso Asistencial" required class="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-xs">
                 </div>
 
                 <div class="p-3 bg-slate-50 dark:bg-slate-850 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
-                    <p class="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Jefe de Unidad</p>
+                    <p class="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Director Médico General</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-[11px] text-slate-600 dark:text-slate-400 mb-1">Grado y Nombre Completo</label>
+                            <label class="block text-[11px] text-slate-600 dark:text-slate-400 mb-1">Título y Nombre Completo</label>
                             <input type="text" name="jefe_unidad_nombre" value="${escapar(a.jefe_unidad_nombre)}" required class="w-full p-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-xs font-semibold">
                         </div>
                         <div>
@@ -628,10 +629,10 @@ router.get('/autoridades-modal', (req, res) => {
                 </div>
 
                 <div class="p-3 bg-slate-50 dark:bg-slate-850 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
-                    <p class="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Jefe del Servicio de Sanidad</p>
+                    <p class="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Jefe de Servicios Médicos y Admisión</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-[11px] text-slate-600 dark:text-slate-400 mb-1">Grado y Nombre Completo</label>
+                            <label class="block text-[11px] text-slate-600 dark:text-slate-400 mb-1">Título y Nombre Completo</label>
                             <input type="text" name="jefe_sanidad_nombre" value="${escapar(a.jefe_sanidad_nombre)}" required class="w-full p-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-xs font-semibold">
                         </div>
                         <div>
@@ -642,8 +643,8 @@ router.get('/autoridades-modal', (req, res) => {
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Responsable Directo / Encargado de Sanidad</label>
-                    <input type="text" name="responsable_nombre" value="${escapar(a.responsable_nombre)}" required class="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-xs font-semibold">
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Coordinador de Estadísticas Clínicas</label>
+                    <input type="text" name="responsable_nombre" value="${escapar(a.responsable_nombre)}" required class="w-full p-2 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-semibold">
                 </div>
 
                 <div class="grid grid-cols-3 gap-3">

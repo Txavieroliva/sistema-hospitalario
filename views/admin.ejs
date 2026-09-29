@@ -87,15 +87,15 @@
         </div>
     </div>
 
-    <!-- MÓDULO OFICIAL DE ESTADÍSTICAS Y REPORTE ESTAMED (DIRECTIVA DGS 03/23) -->
+    <!-- MÓDULO OFICIAL DE ESTADÍSTICAS Y REPORTES HOSPITALARIOS -->
     <div class="mt-8 border-t border-slate-200 dark:border-slate-800 pt-6">
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 mb-6 pb-4 border-b border-slate-200 dark:border-slate-800">
             <div>
                 <h3 class="font-bold text-slate-900 dark:text-slate-100 text-lg flex items-center gap-2">
-                    <span>Estadísticas Epidemiológicas y Reporte ESTAMED</span>
-                    <span class="text-[11px] bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 font-bold px-2.5 py-0.5 rounded-full font-mono">DGS 03/23</span>
+                    <span>Estadísticas Epidemiológicas y Gestión Hospitalaria</span>
+                    <span class="text-[11px] bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 font-bold px-2.5 py-0.5 rounded-full font-mono">Gestión Clínica</span>
                 </h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Vigilancia epidemiológica, consolidación de guardia militar y generación de la planilla reglamentaria sin datos personales.</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Vigilancia epidemiológica, consolidación de guardia y analítica asistencial hospitalaria.</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
                 <button type="button" 
@@ -103,16 +103,16 @@
                         hx-target="#modal-content"
                         onclick="document.getElementById('modal-atencion').classList.remove('hidden')"
                         class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-2 rounded-xl text-xs font-semibold transition border border-slate-300 dark:border-slate-700">
-                    Autoridades Militares
+                    Dirección Médica
                 </button>
                 <button type="button" 
                         onclick="abrirEstamedImprimir()" 
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-1.5" title="Abrir planilla reglamentaria de 10 columnas en formato A4 para impresión o PDF">
-                    Imprimir ESTAMED (A4)
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-1.5" title="Abrir reporte estadístico de atenciones para impresión o PDF">
+                    Imprimir Reporte (A4)
                 </button>
                 <button type="button" 
                         onclick="descargarEstamedExcel()" 
-                        class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-1.5" title="Descargar planilla oficial con formato exacto para la DGS">
+                        class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-1.5" title="Descargar planilla oficial con formato de gestión hospitalaria">
                     Exportar Excel (.xlsx)
                 </button>
             </div>
@@ -151,31 +151,16 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Destino (UUMM)</label>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Servicio Hospitalario</label>
                     <select id="filtro-destino" name="destino" class="w-full p-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 font-semibold">
-                        <option value="TODOS" selected>Todos los Destinos</option>
-                        <option value="CU GRL">CU GRL</option>
-                        <option value="SGE">SGE</option>
-                        <option value="BCOM 602">BCOM 602</option>
-                        <option value="DGAAHH">DGAAHH</option>
-                        <option value="DGAAJJ">DGAAJJ</option>
-                        <option value="SECR AY JEMGE">SECR AY JEMGE</option>
-                        <option value="CASA MILITAR">CASA MILITAR</option>
-                        <option value="DGII">DGII</option>
-                        <option value="DGAF">DGAF</option>
-                        <option value="DGCICD">DGCICD</option>
-                        <option value="DGCYF">DGCYF</option>
-                        <option value="DGICIA">DGICIA</option>
-                        <option value="DGPB">DGPB</option>
-                        <option value="DPM">DPM</option>
-                        <option value="DPC">DPC</option>
-                        <option value="DGPPP">DGPPP</option>
-                        <option value="OSFA">OSFA</option>
-                        <option value="MIN DEF">MIN DEF</option>
-                        <option value="EMCO">EMCO</option>
-                        <option value="DGOD">DGOD</option>
-                        <option value="CGE">CGE</option>
-                        <option value="SHE">SHE</option>
+                        <option value="TODOS" selected>Todos los Servicios</option>
+                        <option value="Consultorios Externos">Consultorios Externos</option>
+                        <option value="Guardia General">Guardia General</option>
+                        <option value="Cardiología">Cardiología</option>
+                        <option value="Traumatología">Traumatología</option>
+                        <option value="Pediatría">Pediatría</option>
+                        <option value="Clínica Médica">Clínica Médica</option>
+                        <option value="Cirugía General">Cirugía General</option>
                     </select>
                 </div>
 
@@ -194,19 +179,19 @@
                 <p id="kpi-total" class="text-xl font-bold text-blue-600 dark:text-blue-400 font-mono mt-1">-</p>
             </div>
             <div class="bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl">
-                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Oficiales (Cat 1)</p>
+                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Prepagas (Cat 1)</p>
                 <p id="kpi-cat1" class="text-xl font-bold text-slate-800 dark:text-slate-200 font-mono mt-1">-</p>
             </div>
             <div class="bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl">
-                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Suboficiales (Cat 2)</p>
+                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Obras Sociales (Cat 2)</p>
                 <p id="kpi-cat2" class="text-xl font-bold text-slate-800 dark:text-slate-200 font-mono mt-1">-</p>
             </div>
             <div class="bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl">
-                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Soldados SV (Cat 3)</p>
+                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">PAMI (Cat 3)</p>
                 <p id="kpi-cat3" class="text-xl font-bold text-slate-800 dark:text-slate-200 font-mono mt-1">-</p>
             </div>
             <div class="bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl">
-                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Personal Civil (Cat 5)</p>
+                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Particular (Cat 5)</p>
                 <p id="kpi-cat5" class="text-xl font-bold text-slate-800 dark:text-slate-200 font-mono mt-1">-</p>
             </div>
             <div class="bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl">
@@ -217,9 +202,9 @@
 
         <!-- 4 Gráficos Interactivos Chart.js -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <!-- Gráfico 1: Categorías Militares -->
+            <!-- Gráfico 1: Categorías de Cobertura -->
             <div class="bg-slate-50/60 dark:bg-slate-850 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
-                <h4 class="font-bold text-slate-800 dark:text-slate-200 text-xs uppercase tracking-wider mb-3">Distribución por Categoría Militar (DGS 03/23)</h4>
+                <h4 class="font-bold text-slate-800 dark:text-slate-200 text-xs uppercase tracking-wider mb-3">Distribución por Cobertura de Salud</h4>
                 <div class="h-64 relative flex items-center justify-center">
                     <canvas id="chart-categorias"></canvas>
                 </div>
@@ -233,9 +218,9 @@
                 </div>
             </div>
 
-            <!-- Gráfico 3: Top Destinos Militares -->
+            <!-- Gráfico 3: Top Servicios Hospitalarios -->
             <div class="bg-slate-50/60 dark:bg-slate-850 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
-                <h4 class="font-bold text-slate-800 dark:text-slate-200 text-xs uppercase tracking-wider mb-3">Top Destinos Militares (UUMM con Mayor Demanda)</h4>
+                <h4 class="font-bold text-slate-800 dark:text-slate-200 text-xs uppercase tracking-wider mb-3">Top Servicios y Especialidades con Mayor Demanda</h4>
                 <div class="h-64 relative">
                     <canvas id="chart-destinos"></canvas>
                 </div>
@@ -243,7 +228,7 @@
 
             <!-- Gráfico 4: Top Diagnósticos / CIE-11 -->
             <div class="bg-slate-50/60 dark:bg-slate-850 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
-                <h4 class="font-bold text-slate-800 dark:text-slate-200 text-xs uppercase tracking-wider mb-3">Patologías y Diagnósticos Frecuentes (CIE-11)</h4>
+                <h4 class="font-bold text-slate-800 dark:text-slate-200 text-xs uppercase tracking-wider mb-3">Patologías y Diagnósticos Frecuentes (CIE-10 / CIE-11)</h4>
                 <div class="h-64 relative">
                     <canvas id="chart-diagnosticos"></canvas>
                 </div>
@@ -325,7 +310,7 @@
                 chartCategorias = new Chart(ctxCat, {
                     type: 'doughnut',
                     data: {
-                        labels: ['Oficiales (Cat 1)', 'Suboficiales (Cat 2)', 'Soldados SV (Cat 3)', 'Civiles (Cat 5)'],
+                        labels: ['Prepagas (Cat 1)', 'Obras Sociales (Cat 2)', 'PAMI (Cat 3)', 'Particular (Cat 5)'],
                         datasets: [{
                             data: [
                                 data.categorias['1'] || 0,

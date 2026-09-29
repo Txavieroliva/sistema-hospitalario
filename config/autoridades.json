@@ -1,13 +1,13 @@
 {
-  "codigo_unidad": "U20004",
-  "nombre_unidad": "Cuartel General- EMGE",
-  "lema_anio": "Año de la Grandeza Argentina",
-  "jefe_unidad_nombre": "CR C JUAN MIGUEL ALBORNOZ",
-  "jefe_unidad_cargo": "J Cu Grl EMGE",
-  "jefe_sanidad_nombre": "TC Med Diego CORDERO",
-  "jefe_sanidad_cargo": "J Ca San-Cu Grl EMGE",
-  "responsable_nombre": "SG Enf Grl Gustavo Joel CRUZ",
+  "codigo_unidad": "HOSP-01",
+  "nombre_unidad": "Hospital Central de Agudos",
+  "lema_anio": "Excelencia Médica y Compromiso Asistencial",
+  "jefe_unidad_nombre": "Dr. Alberto Fernández Rivas",
+  "jefe_unidad_cargo": "Director Médico General",
+  "jefe_sanidad_nombre": "Dra. Carolina Martínez",
+  "jefe_sanidad_cargo": "Jefa de Servicios Médicos y Admisión",
+  "responsable_nombre": "Lic. Esteban Morales",
   "provincia": "Buenos Aires",
   "ciudad": "CABA",
-  "circunstancia": "2B"
+  "circunstancia": "Servicio General"
 }

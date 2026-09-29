@@ -170,17 +170,19 @@ router.get('/buscar', async (req, res) => {
         return res.send(renderPaciente(pacientesData[0]));
     }
 
-    // Si hay multiples resultados, agrupar por grado
+    // Si hay multiples resultados, agrupar por cobertura médica
     const grupos = {
-        'Oficial': [],
-        'Suboficial': [],
-        'SV': [],
-        'A/C': [],
+        'OSDE': [],
+        'Swiss Medical': [],
+        'PAMI': [],
+        'Galeno': [],
+        'Particular': [],
         'Otros': []
     };
 
     pacientesData.forEach(p => {
-        if (grupos[p.grado]) grupos[p.grado].push(p);
+        const os = p.obra_social || p.grado;
+        if (grupos[os]) grupos[os].push(p);
         else grupos['Otros'].push(p);
     });
 
@@ -242,7 +244,7 @@ router.get('/formulario-alta', isRecepcionOrAdmin, (req, res) => {
         <form hx-post="/pacientes/alta" hx-target="#resultado-paciente" class="space-y-4 bg-slate-50/50 dark:bg-slate-855 p-6 border border-slate-200 dark:border-slate-800 rounded-2xl">
             <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
                 <h3 class="font-bold text-slate-900 dark:text-slate-100 text-base">Registrar Nuevo Paciente</h3>
-                <span class="text-xs text-slate-500">Sanidad Militar</span>
+                <span class="text-xs text-slate-500">Admisión Central</span>
             </div>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -272,17 +274,19 @@ router.get('/formulario-alta', isRecepcionOrAdmin, (req, res) => {
                     <input type="text" name="apellido" required placeholder="Ej: Perez" class="w-full p-2.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Grado / Escalafón</label>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Cobertura / Obra Social</label>
                     <select name="grado" required class="w-full p-2.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500">
                         <option value="">Seleccione...</option>
-                        <option value="Oficial">Oficial</option>
-                        <option value="Suboficial">Suboficial</option>
-                        <option value="SV">SV (Soldado Voluntario)</option>
-                        <option value="A/C">A/C (Agente Civil)</option>
+                        <option value="OSDE">OSDE</option>
+                        <option value="Swiss Medical">Swiss Medical</option>
+                        <option value="PAMI">PAMI</option>
+                        <option value="Galeno">Galeno</option>
+                        <option value="IOMA">IOMA</option>
+                        <option value="Particular">Particular / Sin Cobertura</option>
                     </select>
                 </div>
                 <div class="sm:col-span-2 md:col-span-3">
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Destino</label>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Servicio de Admisión</label>
                     <select name="destino" required class="w-full p-2.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500">
                         <option value="">Seleccione...</option>
                         ${DESTINOS.map(d => `<option value="${escapeHTML(d)}">${escapeHTML(d)}</option>`).join('')}

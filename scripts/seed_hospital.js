@@ -43,6 +43,8 @@ function seed() {
             email TEXT,
             obra_social TEXT,
             servicio TEXT,
+            destino TEXT,
+            grado TEXT,
             notas TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         );
@@ -110,8 +112,8 @@ function seed() {
     const servicios = ['Consultorios Externos', 'Guardia General', 'Cardiología', 'Traumatología', 'Pediatría'];
 
     const stmtPac = db.prepare(`
-        INSERT INTO pacientes (dni, nombre, apellido, fecha_nacimiento, sexo, telefono, email, obra_social, servicio, notas)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO pacientes (dni, nombre, apellido, fecha_nacimiento, sexo, telefono, email, obra_social, servicio, destino, grado, notas)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     const pacientesCreados = [];
@@ -131,7 +133,7 @@ function seed() {
             dni, nom, ape, fechaNac, sexo,
             `11-${4000+i}-${5000+i}`,
             `${nom.toLowerCase()}.${ape.toLowerCase()}@email.com`,
-            os, serv, 'Paciente regular sin antecedentes de riesgo agudo.'
+            os, serv, serv, os, 'Paciente regular sin antecedentes de riesgo agudo.'
         );
         pacientesCreados.push({ id: i, dni, nombre: `${nom} ${ape}` });
     }
